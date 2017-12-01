@@ -1,0 +1,65 @@
+---
+title: "Graphs"
+author: "Jiahao Huo"
+date: "May 10, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+library(readr)
+Final_nbadat <- read_csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/199 Research/Final_nbadat.csv")
+Final_nbadat<-Final_nbadat[,c(-1,-3)]
+Final_nbadat$FGP<-round(Final_nbadat$FGP,3)
+nbadat_valid<-Final_nbadat[which(Final_nbadat$FGA>=500),]
+library(plotly)
+p <- plot_ly(alpha = 0.6) %>%
+  add_histogram(x = nbadat_valid$FGP[nbadat_valid$Positions=="PG"|nbadat_valid$Positions=="SG"],name='Guards') %>%
+  add_histogram(x = nbadat_valid$FGP[nbadat_valid$Positions=="PF"|nbadat_valid$Positions=="SF"],name='Forwards') %>%
+  add_histogram(x = nbadat_valid$FGP[nbadat_valid$Positions=="C"],name='Centers') %>%
+  layout(barmode = "overlay")
+p
+
+library(ggplot2)
+hist_C <- ggplot(nbadat_valid[nbadat_valid$Positions=="C",], aes(FGP)) + 
+  geom_histogram(aes(y = ..density..), alpha = 0.7, fill = "#333333") + 
+  geom_density(fill = "#ff4d4d", alpha = 0.5) + 
+  theme(panel.background = element_rect(fill = '#ffffff')) + 
+  ggtitle("Density with Histogram Center")
+hist_C <- ggplotly(hist_C)
+hist_C
+
+hist_SG <- ggplot(nbadat_valid[nbadat_valid$Positions=="SG",], aes(FGP)) + 
+  geom_histogram(aes(y = ..density..), alpha = 0.7, fill = "#333333") + 
+  geom_density(fill = "#ff4d4d", alpha = 0.5) + 
+  theme(panel.background = element_rect(fill = '#ffffff')) +
+  ggtitle("Density with Histogram SG")
+hist_SG <- ggplotly(hist_SG)
+hist_SG
+
+hist_PG <- ggplot(nbadat_valid[nbadat_valid$Positions=="PG",], aes(FGP)) + 
+  geom_histogram(aes(y = ..density..), alpha = 0.7, fill = "#333333") + 
+  geom_density(fill = "#ff4d4d", alpha = 0.5) + 
+  theme(panel.background = element_rect(fill = '#ffffff')) +
+  ggtitle("Density with Histogram PG")
+hist_PG <- ggplotly(hist_PG)
+hist_PG
+
+hist_PF <- ggplot(nbadat_valid[nbadat_valid$Positions=="PF",], aes(FGP)) + 
+  geom_histogram(aes(y = ..density..), alpha = 0.7, fill = "#333333") + 
+  geom_density(fill = "#ff4d4d", alpha = 0.5) + 
+  theme(panel.background = element_rect(fill = '#ffffff')) +
+  ggtitle("Density with Histogram PF")
+hist_PF <- ggplotly(hist_PF)
+hist_PF
+
+hist_SF <- ggplot(nbadat_valid[nbadat_valid$Positions=="SF",], aes(FGP)) + 
+  geom_histogram(aes(y = ..density..), alpha = 0.7, fill = "#333333") + 
+  geom_density(fill = "#ff4d4d", alpha = 0.5) + 
+  theme(panel.background = element_rect(fill = '#ffffff')) +
+  ggtitle("Density with Histogram SF")
+hist_SF <- ggplotly(hist_SF)
+hist_SF
+```
+

@@ -1,0 +1,135 @@
+---
+title: "code62"
+author: "Jiahao Huo 404451256"
+date: "June 2, 2017"
+output: pdf_document
+---
+```{r}
+
+```
+
+```{r}
+library(dplyr)
+library(readr)
+library(ggplot2)
+Final_nbadat <- read.csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/199 Research/Final_nbadat.csv")
+salary<- read.csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/199 Research/salary.csv")
+data1 <- read.csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/new_jiahao.txt")
+features <- read.csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/199 Research/features_sum.csv")
+Final_nbadat<-Final_nbadat[,c(-1,-3)]
+nbadat_valid<-Final_nbadat[which(Final_nbadat$FGA>=300),]
+final_data <- read_csv("D:/Dropbox/UCLA/[Courses]/Stats Minor/STATS 199/199 Research/final_data")
+standardize<-function(x){(x-min(x))/(max(x)-min(x))}
+final_data$REBs<-final_data$DREBs+final_data$OREBs
+final_data$FBR<-final_data$FGMs+final_data$BLKs+final_data$REBs
+final_data$FAD<-final_data$FGMs+final_data$ASTs+final_data$DREBs
+final_data$FADT<-final_data$FGMs+final_data$ASTs+final_data$DREBs+final_data$TOVs
+final_data$FD<-final_data$FGMs+final_data$DREBs
+```
+
+#Center
+```{r}
+final_C<-final_data[which(final_data$Positions=="C"),]
+final_C$avg<-(final_C$FGP_rank*final_C$FGMs+final_C$BLK_rank*final_C$BLKs+final_C$REB_rank*final_C$REBs)/final_C$FBR
+final_C$salary<-standardize(final_C$salary)
+final_C$avg<-standardize(final_C$avg)
+final_C$dis<-(final_C$avg)^2+(final_C$salary)^2
+final_C<-final_C[order(final_C$dis),]
+final_C$dis_rank<-1:nrow(final_C)
+final_C_table<-final_C %>% select(player, FGP, BLK, REB)
+head(final_C_table,n=3)
+
+textdf <- final_C[final_C$player == final_C$player[c(1:3)], ]
+ggplot(data = final_C, aes(x = avg, y = salary, colour=dis)) +
+  geom_point(size = 3) +
+  geom_text(data = textdf, aes(x = avg * 1.05, y = salary*0.9, label = c(1:3))) +
+  scale_color_gradient2(low = "yellow", high = "black",mid="red",midpoint = 0.5)+
+  theme()+
+  labs(title="Center")
+```
+
+#Power Forward
+```{r}
+final_PF<-final_data[which(final_data$Positions=="PF"),]
+final_PF$avg<-(final_PF$FGP_rank*final_PF$FGMs+final_PF$BLK_rank*final_PF$BLKs+final_PF$REB_rank*final_PF$REBs)/final_PF$FBR
+final_PF$salary<-standardize(final_PF$salary)
+final_PF$avg<-standardize(final_PF$avg)
+final_PF$dis<-(final_PF$avg)^2+(final_PF$salary)^2
+final_PF<-final_PF[order(final_PF$dis),]
+final_PF$dis_rank<-1:nrow(final_PF)
+final_PF_table<-final_PF %>% select(player, FGP, BLK, REB)
+head(final_PF_table,n=3)
+
+textdf <- final_PF[final_PF$player == final_PF$player[c(1:3)], ]
+ggplot(data = final_PF, aes(x = avg, y = salary,colour=dis)) +
+  geom_point(size = 3) +
+  geom_text(data = textdf, aes(x = avg * 1.05, y = salary*0.9, label = c(1:3))) +
+  scale_color_gradient2(low = "yellow", high = "black",mid="red",midpoint = 0.5)+
+  theme()+
+  labs(title="Power Forward")
+```
+
+#Shooting Guard
+```{r}
+final_SG<-final_data[which(final_data$Positions=="SG"),]
+final_SG$avg<-(final_SG$FGP_rank*final_SG$FGMs+final_SG$AST_rank*final_SG$ASTs+final_SG$DREB_rank*final_SG$DREBs)/final_SG$FAD
+final_SG$salary<-standardize(final_SG$salary)
+final_SG$avg<-standardize(final_SG$avg)
+final_SG$dis<-(final_SG$avg)^2+(final_SG$salary)^2
+final_SG<-final_SG[order(final_SG$dis),]
+final_SG$dis_rank<-1:nrow(final_SG)
+final_SG_table<-final_SG %>% select(player, FGP, AST, DREB)
+head(final_SG_table,n=3)
+
+
+textdf <- final_SG[final_SG$player == final_SG$player[c(1:3)], ]
+ggplot(data = final_SG, aes(x = avg, y = salary,colour=dis)) +
+  geom_point(size = 3) +
+  geom_text(data = textdf, aes(x = avg * 1.05, y = salary*0.9, label = c(1:3))) +
+  scale_color_gradient2(low = "yellow", high = "black",mid="red",midpoint = 0.5)+
+  theme()+
+  labs(title="Shooting Guard")
+```
+
+#Point Guard
+```{r}
+final_PG<-final_data[which(final_data$Positions=="PG"),]
+final_PG$avg<-(final_PG$FGP_rank*final_PG$FGMs+final_PG$AST_rank*final_PG$ASTs+final_PG$DREB_rank*final_PG$DREBs+final_PG$TOV_rank*final_PG$TOVs)/final_PG$FADT
+final_PG$salary<-standardize(final_PG$salary)
+final_PG$avg<-standardize(final_PG$avg)
+final_PG$dis<-(final_PG$avg)^2+(final_PG$salary)^2
+final_PG<-final_PG[order(final_PG$dis),]
+final_PG$dis_rank<-1:nrow(final_PG)
+final_PG_table<-final_PG %>% select(player, FGP, AST, DREB,TOV)
+head(final_PG_table,n=3)
+
+textdf <- final_PG[final_PG$player == final_PG$player[c(1:3)], ]
+ggplot(data = final_PG, aes(x = avg, y = salary,colour=dis)) +
+  geom_point(size = 3) +
+  geom_text(data = textdf, aes(x = avg * 1.05, y = salary*0.9, label = c(1:3))) +
+  scale_color_gradient2(low = "yellow", high = "black",mid="red",midpoint = 0.5)+
+  theme()+
+  labs(title="Point Guard")
+```
+
+#Small Forward
+```{r}
+final_SF<-final_data[which(final_data$Positions=="SF"),]
+final_SF$avg<-(final_SF$FGP_rank*final_SF$FGMs+final_SF$DREB_rank*final_SF$DREBs)/final_SF$FD
+final_SF$salary<-standardize(final_SF$salary)
+final_SF$avg<-standardize(final_SF$avg)
+final_SF$dis<-(final_SF$avg)^2+(final_SF$salary)^2
+final_SF<-final_SF[order(final_SF$dis),]
+final_SF$dis_rank<-1:nrow(final_SF)
+final_SF_table<-final_SF %>% select(player, FGP, DREB)
+head(final_SF_table,n=3)
+
+textdf <- final_SF[final_SF$player == final_SF$player[c(1:3)], ]
+ggplot(data = final_SF, aes(x = avg, y = salary,colour=dis)) +
+  geom_point(size = 3) +
+  geom_text(data = textdf, aes(x = avg * 1.05, y = salary*0.9, label = c(1:3))) +
+  scale_color_gradient2(low = "yellow", high = "black",mid="red",midpoint = 0.5)+
+  theme()+
+  labs(title="Small Forward")
+```
+

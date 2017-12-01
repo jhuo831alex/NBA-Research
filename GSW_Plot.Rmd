@@ -1,0 +1,750 @@
+w---
+title: "Heat_Maps_Dream_Team"
+author: "Minjie Xia, David Jeong, Alex Huo, Ignat Kulinka, Tim Yang"
+date: "2017/4/28"
+output:
+  html_document: default
+  pdf_document: default
+---
+```{r,echo=FALSE}
+## PF: Draymond Green, James Michael McAdoo
+## C: Andrew Bogut, Marreese Speights
+## SG: Brandon Rush, Klay Thompson
+## PG: Shaun Livingston, Stephen Curry
+## SF: Harrison Barnes, Andre Iguodala
+library(tidyverse)
+library(readr)
+library(stringr)
+library(tidyr)
+library(SportsAnalytics)
+## truncatedss<-read_csv("~/Desktop/SPRING 2017/Academics/STATS 199/Data Sets/truncatedss1415.csv")
+## truncatedss<-read_csv("~/Desktop/SPRING 2017/Academics/STATS 199/Data Sets/truncatedss1516.csv")
+## truncatedss<-read_csv("~/Desktop/SPRING 2017/Academics/STATS 199/Data Sets/ss.csv")
+## X1415plusranking <- read_csv("~/Desktop/SPRING 2017/Academics/STATS 199/Data Sets/1415plusranking.csv")
+## X1516plusranking <- read_csv("~/Desktop/SPRING 2017/Academics/STATS 199/Data Sets/1516plusranking.csv")
+finals <- read_csv("~/Desktop/UCLA/Spring 2017/STATS 199/STATS 199 Research/Final Report/Final_nbadat.csv")
+```
+# For Draymond Green (PF)
+```{r,echo = FALSE}
+green<-filter(finals,player=="Draymond Green")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(green,converted_x>i & converted_x<=i+1)
+  ## subset(green,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+green12<-dpctgdf
+green12$converted_y<-rownames(green12)
+green123<-gather(green12,"converted_x","PCTG",1:50)
+green123[,c(1,2)]<-green123[,c(2,1)]
+colnames(green123)<-colnames(green123[c(2,1,3)])
+green123<-as.data.frame(green123)
+green1234<-filter(green123,is.nan(PCTG)==FALSE)
+green1234$converted_x<-as.numeric(green1234$converted_x) # With correction
+green1234$converted_y<-as.numeric(green1234$converted_y) # With correction
+green1234$PCTG<-as.numeric(green1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+green22<-dmidf
+green22$converted_y<-rownames(green22)
+green223<-gather(green22,"converted_x","nmissed",1:50)
+green2234<-merge(green1234,green223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+green32<-dmadf
+green32$converted_y<-rownames(green32)
+green323<-gather(green32,"converted_x","nmade",1:50)
+green3234<-merge(green2234,green323,by=c("converted_x","converted_y"))
+green3234$Shots<-green3234$nmade+green3234$nmissed
+green3234$nnormalized<-green3234$Shots/max(green3234$Shots)
+green3234$Distance<-sqrt((green3234$converted_x)^2+(green3234$converted_y+41.75)^2)
+green3234$Name<-"Draymond Green"
+green3234$Position<-"PF"
+```
+## For James Michael McAdoo (PF)
+```{r,echo = FALSE}
+mcadoo<-filter(finals,player=="James Michael McAdoo")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(mcadoo,converted_x>i & converted_x<=i+1)
+  ## subset(mcadoo,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+mcadoo12<-dpctgdf
+mcadoo12$converted_y<-rownames(mcadoo12)
+mcadoo123<-gather(mcadoo12,"converted_x","PCTG",1:50)
+mcadoo123[,c(1,2)]<-mcadoo123[,c(2,1)]
+colnames(mcadoo123)<-colnames(mcadoo123[c(2,1,3)])
+mcadoo123<-as.data.frame(mcadoo123)
+mcadoo1234<-filter(mcadoo123,is.nan(PCTG)==FALSE)
+mcadoo1234$converted_x<-as.numeric(mcadoo1234$converted_x) # With correction
+mcadoo1234$converted_y<-as.numeric(mcadoo1234$converted_y) # With correction
+mcadoo1234$PCTG<-as.numeric(mcadoo1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+mcadoo22<-dmidf
+mcadoo22$converted_y<-rownames(mcadoo22)
+mcadoo223<-gather(mcadoo22,"converted_x","nmissed",1:50)
+mcadoo2234<-merge(mcadoo1234,mcadoo223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+mcadoo32<-dmadf
+mcadoo32$converted_y<-rownames(mcadoo32)
+mcadoo323<-gather(mcadoo32,"converted_x","nmade",1:50)
+mcadoo3234<-merge(mcadoo2234,mcadoo323,by=c("converted_x","converted_y"))
+mcadoo3234$Shots<-mcadoo3234$nmade+mcadoo3234$nmissed
+mcadoo3234$nnormalized<-mcadoo3234$Shots/max(mcadoo3234$Shots)
+mcadoo3234$Distance<-sqrt((mcadoo3234$converted_x)^2+(mcadoo3234$converted_y+41.75)^2)
+mcadoo3234$Name<-"James Michael McAdoo"
+mcadoo3234$Position<-"PF"
+```
+## For Andrew Bogut (C)
+```{r,echo = FALSE}
+bogut<-filter(finals,player=="Andrew Bogut")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(bogut,converted_x>i & converted_x<=i+1)
+  ## subset(bogut,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+bogut12<-dpctgdf
+bogut12$converted_y<-rownames(bogut12)
+bogut123<-gather(bogut12,"converted_x","PCTG",1:50)
+bogut123[,c(1,2)]<-bogut123[,c(2,1)]
+colnames(bogut123)<-colnames(bogut123[c(2,1,3)])
+bogut123<-as.data.frame(bogut123)
+bogut1234<-filter(bogut123,is.nan(PCTG)==FALSE)
+bogut1234$converted_x<-as.numeric(bogut1234$converted_x) # With correction
+bogut1234$converted_y<-as.numeric(bogut1234$converted_y) # With correction
+bogut1234$PCTG<-as.numeric(bogut1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+bogut22<-dmidf
+bogut22$converted_y<-rownames(bogut22)
+bogut223<-gather(bogut22,"converted_x","nmissed",1:50)
+bogut2234<-merge(bogut1234,bogut223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+bogut32<-dmadf
+bogut32$converted_y<-rownames(bogut32)
+bogut323<-gather(bogut32,"converted_x","nmade",1:50)
+bogut3234<-merge(bogut2234,bogut323,by=c("converted_x","converted_y"))
+bogut3234$Shots<-bogut3234$nmade+bogut3234$nmissed
+bogut3234$nnormalized<-bogut3234$Shots/max(bogut3234$Shots)
+bogut3234$Distance<-sqrt((bogut3234$converted_x)^2+(bogut3234$converted_y+41.75)^2)
+bogut3234$Name<-"Andrew Bogut"
+bogut3234$Position<-"C"
+```
+# For Marreese Speights (C)
+```{r,echo = FALSE}
+speights<-filter(finals,player=="Marreese Speights")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(speights,converted_x>i & converted_x<=i+1)
+  ## subset(speights,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+speights12<-dpctgdf
+speights12$converted_y<-rownames(speights12)
+speights123<-gather(speights12,"converted_x","PCTG",1:50)
+speights123[,c(1,2)]<-speights123[,c(2,1)]
+colnames(speights123)<-colnames(speights123[c(2,1,3)])
+speights123<-as.data.frame(speights123)
+speights1234<-filter(speights123,is.nan(PCTG)==FALSE)
+speights1234$converted_x<-as.numeric(speights1234$converted_x) # With correction
+speights1234$converted_y<-as.numeric(speights1234$converted_y) # With correction
+speights1234$PCTG<-as.numeric(speights1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+speights22<-dmidf
+speights22$converted_y<-rownames(speights22)
+speights223<-gather(speights22,"converted_x","nmissed",1:50)
+speights2234<-merge(speights1234,speights223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+speights32<-dmadf
+speights32$converted_y<-rownames(speights32)
+speights323<-gather(speights32,"converted_x","nmade",1:50)
+speights3234<-merge(speights2234,speights323,by=c("converted_x","converted_y"))
+speights3234$Shots<-speights3234$nmade+speights3234$nmissed
+speights3234$nnormalized<-speights3234$Shots/max(speights3234$Shots)
+speights3234$Distance<-sqrt((speights3234$converted_x)^2+(speights3234$converted_y+41.75)^2)
+speights3234$Name<-"Marreese Speights"
+speights3234$Position<-"C"
+```
+# For Brandon Rush (SG)
+```{r,echo = FALSE}
+rush<-filter(finals,player=="Brandon Rush")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(rush,converted_x>i & converted_x<=i+1)
+  ## subset(rush,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+rush12<-dpctgdf
+rush12$converted_y<-rownames(rush12)
+rush123<-gather(rush12,"converted_x","PCTG",1:50)
+rush123[,c(1,2)]<-rush123[,c(2,1)]
+colnames(rush123)<-colnames(rush123[c(2,1,3)])
+rush123<-as.data.frame(rush123)
+rush1234<-filter(rush123,is.nan(PCTG)==FALSE)
+rush1234$converted_x<-as.numeric(rush1234$converted_x) # With correction
+rush1234$converted_y<-as.numeric(rush1234$converted_y) # With correction
+rush1234$PCTG<-as.numeric(rush1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+rush22<-dmidf
+rush22$converted_y<-rownames(rush22)
+rush223<-gather(rush22,"converted_x","nmissed",1:50)
+rush2234<-merge(rush1234,rush223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+rush32<-dmadf
+rush32$converted_y<-rownames(rush32)
+rush323<-gather(rush32,"converted_x","nmade",1:50)
+rush3234<-merge(rush2234,rush323,by=c("converted_x","converted_y"))
+rush3234$Shots<-rush3234$nmade+rush3234$nmissed
+rush3234$nnormalized<-rush3234$Shots/max(rush3234$Shots)
+rush3234$Distance<-sqrt((rush3234$converted_x)^2+(rush3234$converted_y+41.75)^2)
+rush3234$Name<-"Brandon Rush"
+rush3234$Position<-"SG"
+```
+# For Klay Thompson (SG)
+```{r,echo = FALSE}
+thompson<-filter(finals,player=="Klay Thompson")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(thompson,converted_x>i & converted_x<=i+1)
+  ## subset(thompson,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+thompson12<-dpctgdf
+thompson12$converted_y<-rownames(thompson12)
+thompson123<-gather(thompson12,"converted_x","PCTG",1:50)
+thompson123[,c(1,2)]<-thompson123[,c(2,1)]
+colnames(thompson123)<-colnames(thompson123[c(2,1,3)])
+thompson123<-as.data.frame(thompson123)
+thompson1234<-filter(thompson123,is.nan(PCTG)==FALSE)
+thompson1234$converted_x<-as.numeric(thompson1234$converted_x) # With correction
+thompson1234$converted_y<-as.numeric(thompson1234$converted_y) # With correction
+thompson1234$PCTG<-as.numeric(thompson1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+thompson22<-dmidf
+thompson22$converted_y<-rownames(thompson22)
+thompson223<-gather(thompson22,"converted_x","nmissed",1:50)
+thompson2234<-merge(thompson1234,thompson223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+thompson32<-dmadf
+thompson32$converted_y<-rownames(thompson32)
+thompson323<-gather(thompson32,"converted_x","nmade",1:50)
+thompson3234<-merge(thompson2234,thompson323,by=c("converted_x","converted_y"))
+thompson3234$Shots<-thompson3234$nmade+thompson3234$nmissed
+thompson3234$nnormalized<-thompson3234$Shots/max(thompson3234$Shots)
+thompson3234$Distance<-sqrt((thompson3234$converted_x)^2+(thompson3234$converted_y+41.75)^2)
+thompson3234$Name<-"Klay Thompson"
+thompson3234$Position<-"SG"
+```
+# For Shaun Livingston (PG)
+```{r,echo = FALSE}
+livingston<-filter(finals,player=="Shaun Livingston")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(livingston,converted_x>i & converted_x<=i+1)
+  ## subset(livingston,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+livingston12<-dpctgdf
+livingston12$converted_y<-rownames(livingston12)
+livingston123<-gather(livingston12,"converted_x","PCTG",1:50)
+livingston123[,c(1,2)]<-livingston123[,c(2,1)]
+colnames(livingston123)<-colnames(livingston123[c(2,1,3)])
+livingston123<-as.data.frame(livingston123)
+livingston1234<-filter(livingston123,is.nan(PCTG)==FALSE)
+livingston1234$converted_x<-as.numeric(livingston1234$converted_x) # With correction
+livingston1234$converted_y<-as.numeric(livingston1234$converted_y) # With correction
+livingston1234$PCTG<-as.numeric(livingston1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+livingston22<-dmidf
+livingston22$converted_y<-rownames(livingston22)
+livingston223<-gather(livingston22,"converted_x","nmissed",1:50)
+livingston2234<-merge(livingston1234,livingston223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+livingston32<-dmadf
+livingston32$converted_y<-rownames(livingston32)
+livingston323<-gather(livingston32,"converted_x","nmade",1:50)
+livingston3234<-merge(livingston2234,livingston323,by=c("converted_x","converted_y"))
+livingston3234$Shots<-livingston3234$nmade+livingston3234$nmissed
+livingston3234$nnormalized<-livingston3234$Shots/max(livingston3234$Shots)
+livingston3234$Distance<-sqrt((livingston3234$converted_x)^2+(livingston3234$converted_y+41.75)^2)
+livingston3234$Name<-"Shaun Livingston"
+livingston3234$Position<-"PG"
+```
+# For Stephen Curry (PG)
+```{r,echo = FALSE}
+curry<-filter(finals,player=="Stephen Curry")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(curry,converted_x>i & converted_x<=i+1)
+  ## subset(curry,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+curry12<-dpctgdf
+curry12$converted_y<-rownames(curry12)
+curry123<-gather(curry12,"converted_x","PCTG",1:50)
+curry123[,c(1,2)]<-curry123[,c(2,1)]
+colnames(curry123)<-colnames(curry123[c(2,1,3)])
+curry123<-as.data.frame(curry123)
+curry1234<-filter(curry123,is.nan(PCTG)==FALSE)
+curry1234$converted_x<-as.numeric(curry1234$converted_x) # With correction
+curry1234$converted_y<-as.numeric(curry1234$converted_y) # With correction
+curry1234$PCTG<-as.numeric(curry1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+curry22<-dmidf
+curry22$converted_y<-rownames(curry22)
+curry223<-gather(curry22,"converted_x","nmissed",1:50)
+curry2234<-merge(curry1234,curry223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+curry32<-dmadf
+curry32$converted_y<-rownames(curry32)
+curry323<-gather(curry32,"converted_x","nmade",1:50)
+curry3234<-merge(curry2234,curry323,by=c("converted_x","converted_y"))
+curry3234$Shots<-curry3234$nmade+curry3234$nmissed
+curry3234$nnormalized<-curry3234$Shots/max(curry3234$Shots)
+curry3234$Distance<-sqrt((curry3234$converted_x)^2+(curry3234$converted_y+41.75)^2)
+curry3234$Name<-"Stephen Curry"
+curry3234$Position<-"PG"
+```
+# For Harrison Barnes (SF)
+```{r,echo = FALSE}
+barnes<-filter(finals,player=="Harrison Barnes")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(barnes,converted_x>i & converted_x<=i+1)
+  ## subset(barnes,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+barnes12<-dpctgdf
+barnes12$converted_y<-rownames(barnes12)
+barnes123<-gather(barnes12,"converted_x","PCTG",1:50)
+barnes123[,c(1,2)]<-barnes123[,c(2,1)]
+colnames(barnes123)<-colnames(barnes123[c(2,1,3)])
+barnes123<-as.data.frame(barnes123)
+barnes1234<-filter(barnes123,is.nan(PCTG)==FALSE)
+barnes1234$converted_x<-as.numeric(barnes1234$converted_x) # With correction
+barnes1234$converted_y<-as.numeric(barnes1234$converted_y) # With correction
+barnes1234$PCTG<-as.numeric(barnes1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+barnes22<-dmidf
+barnes22$converted_y<-rownames(barnes22)
+barnes223<-gather(barnes22,"converted_x","nmissed",1:50)
+barnes2234<-merge(barnes1234,barnes223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+barnes32<-dmadf
+barnes32$converted_y<-rownames(barnes32)
+barnes323<-gather(barnes32,"converted_x","nmade",1:50)
+barnes3234<-merge(barnes2234,barnes323,by=c("converted_x","converted_y"))
+barnes3234$Shots<-barnes3234$nmade+barnes3234$nmissed
+barnes3234$nnormalized<-barnes3234$Shots/max(barnes3234$Shots)
+barnes3234$Distance<-sqrt((barnes3234$converted_x)^2+(barnes3234$converted_y+41.75)^2)
+barnes3234$Name<-"Harrison Barnes"
+barnes3234$Position<-"SF"
+```
+# For Andre Iguodala (SF)
+```{r,echo = FALSE}
+iguodala<-filter(finals,player=="Andre Iguodala")
+
+density_made<-matrix(nrow=47,ncol=50)
+density_missed<-matrix(nrow=47,ncol=50)
+density_pctg<-matrix(nrow=47,ncol=50)
+
+for(i in -25:24){
+  square_feet_x<-filter(iguodala,converted_x>i & converted_x<=i+1)
+  ## subset(iguodala,(converted_x>-25 & converted_x<=-24))
+  for(j in -47:-1){
+    square_feet<-filter(square_feet_x,converted_y>j & converted_y<=j+1)
+    ## subset (square_feet_x,(converted_y>-47 & converted_y<=-46))
+    a<-nrow(subset(square_feet,square_feet$result=="made"))
+    density_made[j+48,i+26]<-a
+    b<-nrow(subset(square_feet,square_feet$result=="missed"))
+    density_missed[j+48,i+26]<-b
+    density_pctg[j+48,i+26]<-a/(a+b)
+  }
+}
+## density_made
+dma<-as.data.frame(density_made)
+colnames(dma)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dma)<-seq(from=-46.5,to=-0.5,by=1)
+dma<-as.matrix(dma)
+## density_missed
+dmi<-as.data.frame(density_missed)
+colnames(dmi)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dmi)<-seq(from=-46.5,to=-0.5,by=1)
+dmi<-as.matrix(dmi)
+## density_percentage
+dpctg<-as.data.frame(density_pctg)
+colnames(dpctg)<-seq(from=-24.5,to=24.5,by=1)
+rownames(dpctg)<-seq(from=-46.5,to=-0.5,by=1)
+dpctg<-as.matrix(dpctg)
+```
+## On 1*1 grids
+```{r,echo = FALSE}
+dpctgdf<-as.data.frame(dpctg)
+iguodala12<-dpctgdf
+iguodala12$converted_y<-rownames(iguodala12)
+iguodala123<-gather(iguodala12,"converted_x","PCTG",1:50)
+iguodala123[,c(1,2)]<-iguodala123[,c(2,1)]
+colnames(iguodala123)<-colnames(iguodala123[c(2,1,3)])
+iguodala123<-as.data.frame(iguodala123)
+iguodala1234<-filter(iguodala123,is.nan(PCTG)==FALSE)
+iguodala1234$converted_x<-as.numeric(iguodala1234$converted_x) # With correction
+iguodala1234$converted_y<-as.numeric(iguodala1234$converted_y) # With correction
+iguodala1234$PCTG<-as.numeric(iguodala1234$PCTG)
+
+
+dmidf<-as.data.frame(dmi)
+iguodala22<-dmidf
+iguodala22$converted_y<-rownames(iguodala22)
+iguodala223<-gather(iguodala22,"converted_x","nmissed",1:50)
+iguodala2234<-merge(iguodala1234,iguodala223,by=c("converted_x","converted_y"))
+
+dmadf<-as.data.frame(dma)
+iguodala32<-dmadf
+iguodala32$converted_y<-rownames(iguodala32)
+iguodala323<-gather(iguodala32,"converted_x","nmade",1:50)
+iguodala3234<-merge(iguodala2234,iguodala323,by=c("converted_x","converted_y"))
+iguodala3234$Shots<-iguodala3234$nmade+iguodala3234$nmissed
+iguodala3234$nnormalized<-iguodala3234$Shots/max(iguodala3234$Shots)
+iguodala3234$Distance<-sqrt((iguodala3234$converted_x)^2+(iguodala3234$converted_y+41.75)^2)
+iguodala3234$Name<-"Andre Iguodala"
+iguodala3234$Position<-"SF"
+```
+## Rbind 1
+```{r}
+allplayer3234<-rbind(iguodala3234,bogut3234,rush3234,green3234,barnes3234,mcadoo3234,thompson3234,speights3234,livingston3234,curry3234)
+indexsweet<-which(allplayer3234$PCTG>=0.5)
+indexnonsweet<-which(allplayer3234$PCTG<=0.4)
+allplayersweet<-allplayer3234[indexsweet,]
+allplayernonsweet<-allplayer3234[indexnonsweet,]
+allplayersweet<-filter(allplayersweet)
+allplayernonsweet<-filter(allplayernonsweet)
+max(allplayersweet$Shots)
+max(allplayernonsweet$Shots)
+0.4/max(allplayersweet$PCTG)
+0.5/max(allplayersweet$PCTG)
+0.4/(max(allplayersweet$PCTG)+min(allplayernonsweet$PCTG))
+0.5/(max(allplayersweet$PCTG)+min(allplayernonsweet$PCTG))
+
+g4<-ggplot()+geom_point(data=allplayersweet,aes(x=converted_x,y=converted_y,color=PCTG,size=Shots,shape=Position))+geom_point(data=allplayernonsweet,aes(x=converted_x,y=converted_y,color=PCTG,size=Shots,shape=Position))+scale_color_gradientn(colours=c("black","grey","white","orange","red"),values=c(0,0.40,0.45,0.50,1),breaks=c(0.4,0.5))+
+  # geom_point(shape=0)+
+  geom_path(data=data.frame(x=c(-25,-25,25,25,-25),y=c(-47,0,0,-47,-47)),aes(x=x,y=y))+ ## Rim
+  geom_path(data=data.frame(x=c(-25,25),y=c(0,0)),aes(x=x,y=y))+ ## Mid-Line
+  ## geom_path(data=data.frame(x=c(-6000:(-1)/1000,1:6000/1000),y=c(sqrt(6^2-c(-6000:(-1)/1000,1:6000/1000)^2))),aes(x=x,y=y))+
+  geom_path(data=data.frame(x=c(-6000:(-1)/1000,1:6000/1000),y=-c(sqrt(6^2-c(-6000:(-1)/1000,1:6000/1000)^2))),aes(x=x,y=y))+ ## The half-court arc
+  geom_path(data=data.frame(x=c(-6000:(-1)/1000,1:6000/1000),y=-c(28-sqrt(6^2-c(-6000:(-1)/1000,1:6000/1000)^2))),aes(x=x,y=y))+ 
+  geom_path(data=data.frame(x=c(-6000:(-1)/1000,1:6000/1000),y=-c(28+sqrt(6^2-c(-6000:(-1)/1000,1:6000/1000)^2))),aes(x=x,y=y),linetype='dashed')+ ## The free-throw arc
+  geom_path(data=data.frame(x=-c(-8,-8,8,8,-8),y=-c(47,28,28,47,47)),aes(x=x,y=y))+ ## The box
+  geom_path(data=data.frame(x=c(-6,-6,6,6,-6),y=-c(47,28,28,47,47)),aes(x=x,y=y))+ ## The inner box
+  geom_path(data=data.frame(x=c(-4000:(-1)/1000,1:4000/1000),y=-c(41.25-sqrt(4^2-c(-4000:(-1)/1000,1:4000/1000)^2))),aes(x=x,y=y))+ ## The 3-seconds area
+  geom_path(data=data.frame(x=c(-750:(-1)/1000,1:750/1000,750:1/1000,-1:-750/1000),y=-c(c(41.75+sqrt(0.75^2-c(-750:(-1)/1000,1:750/1000)^2)),c(41.75-sqrt(0.75^2-c(750:1/1000,-1:-750/1000)^2)))),aes(x=x,y=y))+ ## The 3-seconds area circle
+  geom_path(data=data.frame(x=c(-3,3),y=-c(43,43)),lineend='butt',aes(x=x,y=y))+ ## The hoop
+  geom_path(data=data.frame(x=c(-22,-22,-22000:(-1)/1000,1:22000/1000,22,22),y=-c(47,47-169/12,41.75-sqrt(23.75^2-c(-22000:(-1)/1000,1:22000/1000)^2),47-169/12,47)),aes(x=x,y=y))+ ## The 3 pt line
+ ggtitle("Sweet and Unsweet Spots for Golden State Warriors (1 sqft)")+scale_size_continuous(limits=c(0,70),breaks=c(10,25,70))+theme_void(base_size =9) +
+  theme(plot.title = element_text(hjust = 0.5))
+g4
+```
