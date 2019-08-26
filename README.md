@@ -6,11 +6,11 @@ While all players in the NBA are extremely talented athletes, many hone their sk
 * Picked out most relevant features for each of the positions 
 * Ranked the selected Statistics within each position 
 * Calculated the weighted average of the ranks  
-* Create a plot for each position: 
+* Created a plot for each position: 
   * x axis: standardized weighted rank; y axis: standardized salary
-* Compare Euclidean Distances between each point and the origin
+* Compared Euclidean Distances between each point and the origin
   * Origin (Ideal player): free and has the smallest standardized weighted rank score (best performance)
-* Select the top 3 players for each of the positions
+* Selected the top 3 players for each of the positions
 * Visualized sweet spots and unsweet spots for the NBA Finalists with Spatial Heat Maps and compared them with the team created by ranking algorithm
 
 # Further Details
