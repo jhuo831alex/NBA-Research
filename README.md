@@ -14,7 +14,9 @@ While all players in the NBA are extremely talented athletes, many hone their sk
 * Visualized sweet spots and unsweet spots for the NBA Finalists with Spatial Heat Maps and compared them with the team created by ranking algorithm
 
 # Further Details
-For more information: [Research Report](https://github.com/jhuo831alex/Research_NBA-Player-Analytics/blob/master/Report.pdf)
+For more information: 
+- [Research Report](https://github.com/jhuo831alex/Research_NBA-Player-Analytics/blob/master/Report.pdf)
+- [Presentation Deck](https://github.com/jhuo831alex/Research_NBA-Player-Analytics/blob/master/Project_Deck.pdf)
 
 
 
