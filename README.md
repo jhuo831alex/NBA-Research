@@ -1,33 +1,20 @@
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a>
-    <img src="https://www.itsnicethat.com/system/files/072017/59636abf7fa44cb082006e80/images_slice_large/OCD_Commercial_NBA_Its_Nice_That_list.jpg?1499687638" alt="Logo" width="140" height="80">
-  </a>
-  <h2 align="center">Research: NBA Player Analytics</h2>
+# About the Research
+While all players in the NBA are extremely talented athletes, many hone their skills to the point at which their expertise cannot be denied and simply demand massive salaries. This paper presents a possible solution to the old of problem of creating the best possible performing sports team while at the same time minimizing the cost of the team. 
 
-  <p align="center">
-    A Cost Efficient Approach to Building an NBA Team
-  </p>
-</p>
+# Methodology
+* Important Features: Field Goal Percentage (FGP), Defense Rebound (DREB),Offense Rebound (OREB), Rebound(REB), Assist (AST), Turn Over (TOV), Block (BLK), and Field Goal Made (FGM)
+* Picked out most relevant features for each of the positions 
+* Ranked the selected Statistics within each position 
+* Calculated the weighted average of the ranks  
+* Create a plot for each position: 
+  * x axis: standardized weighted rank; y axis: standardized salary
+* Compare Euclidean Distances between each point and the origin
+  * Origin (Ideal player): free and has the smallest standardized weighted rank score (best performance)
+* Select the top 3 players for each of the positions
+* Visualized sweet spots and unsweet spots for the NBA Finalists with Spatial Heat Maps and compared them with the team created by ranking algorithm
 
-
-<!-- RESEARCH ABSTRACT -->
-## Research Abstract
-While all players in the NBA are extremely talented athletes, many hone their skills to the point at which their expertise cannot be denied and simply demand massive salaries. This paper presents a possible solution to the old of problem of creating the best possible performing sports team while at the same time minimizing the cost of the team. Through a selection-ranking algorithm our team created based on real game data, we can pinpoint player whose talents are impressive yet salaries are low in comparison. For each position on the court, the algorithm identifies cost efficient and prominent players and ranks them compared to each other. As a proof of concept, we create an optimal theoretical team as well as a backup for each position. In addition, to demonstrate the abilities of the picked performance to cost optimized team we use spatial analytics and graphics to create shot charts to compare it to top teams in the NBA such as Golden State Warriors and Cleveland Cavaliers. While the paper deals specifically with basketball, given the right data, the methodology presented can be easily adapted for any team based sport.
-
+# Further Details
 For more information: [Research Report](https://github.com/jhuo831alex/Research_NBA-Player-Analytics/blob/master/Report.pdf)
 
-<!-- CONTACT -->
-## Contact
-Alex (Jiahao) Huo: 
-[![LinkedIn][linkedin-shield]][linkedin-url]
-[![Email][email-shield]][email-url]
 
-
-<!-- MARKDOWN LINKS & IMAGES -->
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/jiahaohuo/
-[email-shield]: https://img.shields.io/badge/-Gmail-black.svg?style=flat-square&logo=gmail&colorB=555
-[email-url]: mailto:jiahao.h@columbia.edu
 
